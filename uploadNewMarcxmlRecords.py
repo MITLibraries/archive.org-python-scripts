@@ -46,15 +46,3 @@ with open(fileName) as csvfile:
                         replacementDirectory + iaId + '_marc.xml')
             r2 = item.upload(replacementDirectory + iaId + '_marc.xml')
             print(r2)
-
-# id = 'mit_pub_dom_test_object1'
-# id = 'preludeno2furios00jaco'
-# item = s.get_item(id)
-# r = item.upload(id + '_marc.xml')
-# print(r)
-# title = item.item_metadata['metadata']['title']
-# print(title, item.item_metadata)
-
-# item = s.get_item('mit_pub_dom_test_object')
-# print(item.metadata['curation'])
-# print(item.item_metadata)
