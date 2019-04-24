@@ -1,0 +1,7 @@
+*.txt
+*.xml
+*.csv
+.DS_Store
+Pipfile
+Pipfile.lock
+secrets.py
