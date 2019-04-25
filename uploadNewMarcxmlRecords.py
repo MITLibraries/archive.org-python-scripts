@@ -33,8 +33,8 @@ f.writerow(['iaID'] + ['oclcNum'] + ['response'] + [''])
 # script content
 backupDirectory = 'archive.orgBackup/'
 replacementDirectory = 'oclcRecords/'
-if os.path.isdir('archive.orgBackup/') is False:
-    os.makedirs('replacementDirectory')
+if os.path.isdir(backupDirectory) is False:
+    os.makedirs(backupDirectory)
 with open(fileName) as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
