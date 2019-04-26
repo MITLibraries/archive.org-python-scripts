@@ -38,14 +38,11 @@ if os.path.isdir(backupDirectory) is False:
 with open(fileName) as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        rowCount -= 1
-        print('Items remaining: ', rowCount)
         iaId = row['iaIdentifier']
         oclcNum = row['oclcNum']
         item = s.get_item(iaId)
         fileName = iaId + '_marc.xml'
         r = item.download(files=fileName, destdir=backupDirectory)
-        print(r)
         print(oclcNum + '.xml', iaId + '_marc.xml')
         shutil.copy(replacementDirectory + oclcNum + '.xml',
                     replacementDirectory + iaId + '_marc.xml')
@@ -53,4 +50,6 @@ with open(fileName) as csvfile:
         utc = datetime.datetime.utcnow()
         utcTime = utc.strftime('%Y-%m-%dT%H:%M:%SZ')
         f.writerow([iaId] + [oclcNum] + [r2] + [utcTime])
+        rowCount -= 1
+        print('Items remaining: ', rowCount)
         print(r2)
