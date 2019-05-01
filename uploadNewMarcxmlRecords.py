@@ -3,6 +3,7 @@ import argparse
 import csv
 import os
 import shutil
+import time
 import datetime
 import secrets
 
@@ -17,9 +18,10 @@ if args.fileName:
 else:
     fileName = input('Enter the file of data to be searched: ')
 
-# archive.org authentication
+# archive.org authentication and start time
 c = {'s3': {'access': secrets.access, 'secret': secrets.secret}}
 s = get_session(config=c)
+startTime = time.time()
 
 # get row count
 with open(fileName) as csvfile:
@@ -27,7 +29,9 @@ with open(fileName) as csvfile:
     rowCount = len(list(reader))
 
 # create log
-f = csv.writer(open('recordsUpdated.csv', 'w'))
+currTime = datetime.datetime.utcnow()
+logCreateTime = currTime.strftime('%Y-%m-%dT%H:%M:%SZ')
+f = csv.writer(open('recordsUpdated' + logCreateTime + '.csv', 'w'))
 f.writerow(['iaID'] + ['oclcNum'] + ['response'] + [''])
 
 # script content
@@ -46,10 +50,20 @@ with open(fileName) as csvfile:
         print(oclcNum + '.xml', iaId + '_marc.xml')
         shutil.copy(replacementDirectory + oclcNum + '.xml',
                     replacementDirectory + iaId + '_marc.xml')
-        r2 = item.upload(replacementDirectory + iaId + '_marc.xml')
+        key = 'force-update'
+        value = 'true'
+        updateDict = {key: value}
+        forceUpdate = item.modify_metadata(dict(updateDict))
+        removeDesc = item.modify_metadata(dict(description='REMOVE_TAG'))
+        removeSubj = item.modify_metadata(dict(subject='REMOVE_TAG'))
+        uploadMarc = item.upload(replacementDirectory + iaId + '_marc.xml')
         utc = datetime.datetime.utcnow()
         utcTime = utc.strftime('%Y-%m-%dT%H:%M:%SZ')
-        f.writerow([iaId] + [oclcNum] + [r2] + [utcTime])
+        f.writerow([iaId] + [oclcNum] + [uploadMarc] + [utcTime])
         rowCount -= 1
         print('Items remaining: ', rowCount)
-        print(r2)
+        print(uploadMarc)
+
+# print script run time
+td = datetime.timedelta(seconds=time.time() - startTime)
+print("Elapsed time: {}".format(td))
